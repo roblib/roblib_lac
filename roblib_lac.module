@@ -1,0 +1,55 @@
+<?php
+
+/**
+ * @file
+ * Primary module hooks for roblib_lac module.
+ */
+
+use Drupal\Core\Form\FormStateInterface;
+
+/**
+ * Implements hook_form_form_id_alter().
+ */
+function roblib_lac_form_rest_oai_pmh_settings_form_alter(&$form, FormStateInterface $form_state, $form_id) {
+  $config = \Drupal::configFactory()->getEditable('rest_oai_pmh.settings');
+
+  $view = $config->get('lac_view');
+  $new_element = [
+    'lac_view' => [
+      '#type' => 'details',
+      '#tree' => TRUE,
+      '#open' => TRUE,
+      '#title' => t('LAC View'),
+      '#attributes' => ['style' => 'max-width: 750px'],
+      '#description' => t('<p>Set which view to pull information from for the lac mapping.</p>'),
+      'view_machine_name' => [
+        '#type' => 'textfield',
+        '#title' => t('View Machine Name'),
+        '#default_value' => empty($view['view_machine_name']) ? '' : $view['view_machine_name'],
+      ],
+      'view_display_name' => [
+        '#type' => 'textfield',
+        '#title' => ('View Display Name'),
+        '#default_value' => empty($view['view_display_name']) ? '' : $view['view_display_name'],
+      ],
+    ],
+  ];
+
+  $form = array_merge(
+    array_slice($form, 0, array_search('repository_name', array_keys($form)), TRUE),
+    ['lac_view' => $new_element],
+    array_slice($form, array_search('repository_name', array_keys($form)), NULL, TRUE)
+  );
+  $form['actions']['submit']['#submit'][] = 'roblib_lac_rest_oai_admin_settings_submit';
+
+}
+
+/**
+ * Saves additional configs.
+ */
+function roblib_lac_rest_oai_admin_settings_submit(array &$form, $form_state) {
+  $value = $form_state->getValue('lac_view');
+  \Drupal::configFactory()->getEditable('rest_oai_pmh.settings')
+    ->set('lac_view', $form_state->getValue('lac_view'))
+    ->save();
+}

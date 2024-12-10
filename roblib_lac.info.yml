@@ -1,0 +1,8 @@
+name: 'roblib_lac'
+type: module
+description: 'Extends rest_oai_pmh with LAC compliant metatdata'
+package: Custom
+core_version_requirement: ^10 || ^11
+dependencies:
+  - islandora:islandora
+  - rest_oai_pmh:rest_oai_pmh

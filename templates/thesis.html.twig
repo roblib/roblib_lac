@@ -1,0 +1,40 @@
+<dc:title xml:lang="eng">
+	<title lang="en">{{ elements.title }}</title>
+	{% if elements.subtitle is not empty%}
+		<subTitle>{{ elements.subtitle }}</subTitle>
+	{% endif %}
+</dc:title>
+<dc:description role="abstract" xml:lang="en">{{ elements.abstract }}</dc:description>
+
+{% for role_name_info in elements.linked_agent | split('|') %}
+	{% set role_name = role_name_info | split(':') %}
+	{% set name_type_info = elements.linked_agent_vocabulary | split(',') %}
+
+	{% set name_type_info_x = name_type_info[loop.index0] | replace({"Person": "person", "Corporate Body": "corporate", "Family": "family"}) %}
+
+	{% if role_name[0] == 'Author' %}
+		<dc:creator>
+			{{ role_name[1]|trim }}
+		</dc:creator>
+	{% else %}
+		<dc:contributor role='{{ role_name[0] | trim }}'>
+			{{ role_name[1] }}
+		</dc:contributor>
+	{% endif %}
+{% endfor %}
+
+{% for entry in elements.subject_topic | split('|') %}
+	<dc:subject>{{ entry }}</dc:subject>
+{% endfor %}
+
+<dc:type>{{ elements.genre }}
+</dc:type>
+
+<dc:publisher country="{{elements.country_of_publication}}">{{elements.publisher}}</dc:publisher>
+
+{% for language in elements.language_iso6392b |split ('|') %}
+	<dc:language>{{ language|trim }}</dc:language>
+{% endfor %}
+
+
+<dc:date>{{ elements.date_issued | split(' ') | first }}</dc:date>

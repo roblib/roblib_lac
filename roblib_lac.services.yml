@@ -1,0 +1,6 @@
+services:
+  roblib_lac.plugin.oai_metadata_map.lac_rdf:
+    class: Drupal\roblib_lac\Plugin\OaiMetadataMap\LacRdf
+    arguments: ['@current_route_match']
+    tags:
+      - { name: plugin, type: oai_metadata_map }
